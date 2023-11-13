@@ -9,7 +9,7 @@ Stance detection is important for understanding different attitudes and beliefs 
 ## Citing the paper
 If you use the code or datasets from this apper, you can cite us with the following BibTex entry:
 ```
-   @inproceedings{hanley2023tata,
+@inproceedings{hanley2023tata,
     title={{TATA}: Stance Detection via Topic-Agnostic and Topic-Aware Embeddings},
     author={Hanley, Hans W. A. and Durumeric, Zakir},
     booktitle={The 2023 Conference on Empirical Methods in Natural Language Processing},
