@@ -12,6 +12,10 @@ Within this work, utilizing a dataset of [news articles from 3,074 news websites
 ## Topic-Agnostic (TAG) Dataset
 In order to initially train a dataset of topic-agnostic encoding layer for use in our stance detection model, we extended the [original VAST dataset](https://github.com/emilyallaway/zero-shot-stance) using [the Dipper Paraphraser](https://huggingface.co/kalpeshk2011/dipper-paraphraser-xxl). You can download the extended VAST/TAG dataset, at the following [link](https://drive.google.com/file/d/17M2lHPWP9ZDcJ2jUTwe9aHT6HyO7jQ02/view?usp=drive_link). As in the original VAST dataset 0=against, 1=pro, 2=neutral.
 
+
+## Request TATA Model Weights
+In this work, we benchmark three different models, a Topic-Agnostic model (TAG), a Topic-Aware model (TAW), and a model that incorporates both the TAG and TAW models named TATA. To request the weights for these models, please fill out the following [Google form](https://forms.gle/HAgs9Ywvy4GsJG9S9). 
+
 ## Citing the paper
 If you use the code or datasets from this apper, you can cite us with the following BibTex entry:
 ```
