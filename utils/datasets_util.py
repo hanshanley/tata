@@ -10,6 +10,18 @@ from datasets import load_dataset
 import json
 import re
 
+
+def load_constrative_topic_Stance_batch(file_name):
+    stance_dataset = []
+    with open(file_name, 'r') as fp:
+        labels = set()
+        for line in fp:
+            line = json.loads(line)
+            stance_dataset.append((line[0],
+                                   line[-1],
+                                    line[1],
+                                    line[-2]))
+    return stance_dataset
     
 class FullStanceDataset(Dataset):
     def __init__(self, dataset, args):
