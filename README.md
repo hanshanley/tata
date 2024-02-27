@@ -1,7 +1,8 @@
 # TATA: Stance Detection via Topic-Agnostic and Topic-Aware Embeddings
 Github Repository for TATA: Stance Detection via Topic-Agnostic and Topic-Aware Embeddings
 
-Full Paper: https://www.hanshanley.com/files/tata.pdf
+Full Paper: https://aclanthology.org/2023.emnlp-main.694/
+
 
 Stance detection is important for understanding different attitudes and beliefs on the Internet. However, given that a passage's stance toward a given topic is often highly dependent on that topic, building a stance detection model that generalizes to unseen topics is difficult. In this work, we propose using contrastive learning as well as an unlabeled dataset of news articles that cover a variety of different topics to train topic-agnostic/TAG and topic-aware/TAW embeddings for use in downstream stance detection. Combining these embeddings in our full TATA model, we achieve state-of-the-art performance across several public stance detection datasets (0.771-score on the Zero-shot VAST dataset). 
 
