@@ -36,31 +36,46 @@ def seed_everything(seed=11711):
     
 HIDDEN_SIZE = 768
 N_CLASSES = 3
+
 class StanceClassifier(torch.nn.Module):
     '''
-    This module performs stance classification using deBERTa and TAG embeddings.
+    This module performs stance classification using deBERTa embeddings and TAW embeddings.
     '''
     def __init__(self, config):
         super(StanceClassifier, self).__init__()
-        self.num_labels = config.num_labels
-        self.topic_agnostic = AutoModel.from_pretrained('microsoft/deberta-v3-base',cache_dir = 'cache')
-        self.deberta = AutoModel.from_pretrained('microsoft/deberta-v3-base',cache_dir = 'cache')
-        self.topic_agnostic.load_state_dict(torch.load('tag_emebddings.pt'))
-        for param in self.topic_agnostic.parameters():
+
+        self.topic_aware =AutoModel.from_pretrained('microsoft/deberta-v3-base',cache_dir = 'cache')
+        self.topic_aware.load_state_dict(torch.load('taw_embeddings.pt'))
+        for param in self.topic_aware.parameters():
             param.requires_grad = False
+        self.deberta = AutoModel.from_pretrained('microsoft/deberta-v3-base',cache_dir = 'cache')
         for param in self.deberta.parameters():
             param.requires_grad = True
-       
+
         self.scale = math.sqrt(HIDDEN_SIZE)
         self.dropout = torch.nn.Dropout(config.hidden_dropout_prob)
-        self.linear_out = torch.nn.Linear(2*HIDDEN_SIZE,HIDDEN_SIZE)
+        self.linear_out = torch.nn.Linear(HIDDEN_SIZE,HIDDEN_SIZE)
         self.linear_out.requires_grad = True
         self.batchnorm = torch.nn.BatchNorm1d(HIDDEN_SIZE)
-        self.attention_linear = torch.nn.Linear(HIDDEN_SIZE,HIDDEN_SIZE)
-        self.linear_final = torch.nn.Linear(HIDDEN_SIZE,HIDDEN_SIZE)
-        self.relu_final = torch.nn.ReLU()
-        self.batchnorm_final = torch.nn.BatchNorm1d(HIDDEN_SIZE)
-        self.linear_final2 = torch.nn.Linear(HIDDEN_SIZE,N_CLASSES)
+        self.linear = torch.nn.Linear(HIDDEN_SIZE, N_CLASSES)
+        self.linear.requires_grad = True
+        self.relu = torch.nn.ReLU()
+        
+        
+        self.attention_encoding = torch.nn.Linear(HIDDEN_SIZE,HIDDEN_SIZE)
+        self.attention_encoding.requires_grad = True
+        self.text_linear_layer = torch.nn.Linear(HIDDEN_SIZE,HIDDEN_SIZE)
+        
+        self.dropout_2 = torch.nn.Dropout(config.hidden_dropout_prob)
+        
+        self.linear_2 = torch.nn.Linear(2*HIDDEN_SIZE,HIDDEN_SIZE)
+        self.linear_2.requires_grad = True
+        self.batchnorm_2= torch.nn.BatchNorm1d(HIDDEN_SIZE)
+        self.batchnorm_2.requires_grad = True
+        self.relu_2 = torch.nn.ReLU()
+        self.linear_3 = torch.nn.Linear(HIDDEN_SIZE,N_CLASSES)
+        self.linear_3.requires_grad = True
+        
 
     def attention(self, inputs, query):
         sim = torch.einsum('blh,bh->bl', inputs, query) / self.scale  # (B, L)
@@ -71,18 +86,19 @@ class StanceClassifier(torch.nn.Module):
     def predict_stance(self,input_ids_1, attention_mask_1,
                            input_ids_2, attention_mask_2,
                       input_ids_3, attention_mask_3):
-        deberta_emebddings = self.deberta(input_ids_3, attention_mask_3)['last_hidden_state'][:,0,:]
-        tag_emebddings = self.topic_agnostic(input_ids_3, attention_mask_3)['last_hidden_state'][:,0,:]
+        text_token_emebddings = self.deberta(input_ids_3, attention_mask_3)['last_hidden_state'][:,0,:]
+        topic_token_emebddings = self.deberta(input_ids_2, attention_mask_2)['last_hidden_state'][:,0,:]
+        topic_aware_encoding =self.topic_aware(input_ids_3,attention_mask_3)['last_hidden_state'][:,0,:]
+        text_topic_aware_attention = self.attention(topic_aware_encoding.unsqueeze(1), self.attention_encoding(topic_token_emebddings))
         
-        tag_text_topic_aware_attention = self.attention(deberta_emebddings.unsqueeze(1),self.attention_linear(tag_emebddings))
-        output1 = torch.cat((tag_text_topic_aware_attention,tag_emebddings), axis = -1)
-        output1 = self.dropout(output1)
-        output1 = self.linear_out(output1)
-        full_out = self.relu_final(output1)
-        full_out = self.batchnorm_final(output1)
-        full_out = self.linear_final2(full_out)
-        return full_out
+        output2 = torch.cat((text_token_emebddings,text_topic_aware_attention), axis = -1)
+        output2 = self.dropout_2(output2)
+        output2 = self.linear_2(output2)
+        output2  = self.relu_2(output2)
+        output2 = self.batchnorm_2(output2)
+        output2 = self.linear_3(output2) 
 
+        return output2
 
 
 def model_eval(dataloader, model, device):
