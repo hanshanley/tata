@@ -23,7 +23,7 @@ def load_constrative_topic_stance_batch(file_name):
     return stance_dataset
 
 
-class TAWStanceDataset(Dataset):
+class TawStanceDataset(Dataset):
     def __init__(self, dataset, args):
         self.dataset = dataset
         self.p = args
