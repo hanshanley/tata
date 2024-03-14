@@ -35,8 +35,8 @@ class TAWStanceDataset(Dataset):
         return self.dataset[idx]
 
     def pad_data(self, data):
-        query = [x[0]+ " [SEP] "+ x[1]  for x in data]
-        context = [x[2]+ " [SEP] "+ x[3] for x in data]
+        query = [x[0]+ " [SEP] "+ x[1].lower()  for x in data]
+        context = [x[2]+ " [SEP] "+ x[3].lower() for x in data]
         
         queryEncdoing = self.tokenizer(query, return_tensors='pt', padding=True, truncation=True,max_length=512)
         contextEncoding = self.tokenizer(context, return_tensors='pt', padding=True, truncation=True,max_length=512)
