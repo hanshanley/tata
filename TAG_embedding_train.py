@@ -99,9 +99,6 @@ for epoch in range(0, NUM_EPOCHS):
         learner = learner.train()
         b_ids_1, b_mask_1,b_labels = (batch['token_ids_1'],
                                    batch['attention_mask_1'], batch['labels'])
-        b_ids_1 = b_ids_1.to(device)
-        b_mask_1 = b_mask_1.to(device)
-        b_labels = b_labels.to(device)
         
         opt.zero_grad()
         loss = learner(b_ids_1, b_mask_1, b_labels)/BATCH_SIZE
