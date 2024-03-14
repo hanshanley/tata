@@ -145,10 +145,6 @@ for epoch in range(0,NUM_EPOCHS):
         b_ids_1, b_mask_1,b_ids_2, b_mask_2 = (batch['token_ids_1'],
                                    batch['attention_mask_1'], batch['token_ids_2'],
                                    batch['attention_mask_2'])
-        b_ids_1 = b_ids_1.to(device)
-        b_mask_1 = b_mask_1.to(device)
-        b_ids_2 = b_ids_2.to(device)
-        b_mask_2 = b_mask_2.to(device)
         opt.zero_grad()
         loss = learner(b_ids_1, b_mask_1,b_ids_2, b_mask_2)
         loss.backward()
