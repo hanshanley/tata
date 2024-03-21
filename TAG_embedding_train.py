@@ -63,7 +63,9 @@ class TAGTrainer(nn.Module):
         bottom = torch.sqrt(square_norm2).unsqueeze(0)*torch.sqrt(square_norm2).unsqueeze(1)
         bottom_mask =  torch.zeros(embedding.shape[0], embedding.shape[0])
         bottom_mask =1 -bottom_mask.fill_diagonal_(1).to(device)
-        loss = -1*torch.log(torch.sum(mask*torch.exp(dot/(self.temperature*bottom)),axis=1)/torch.sum(bottom_mask *torch.exp(dot/(self.temperature*bottom)),axis=1))
+        top = torch.sum(mask*torch.exp(dot/(self.temperature*bottom)),axis=1)+1e-16 # For stability 
+        new_bottom = torch.sum(bottom_mask *torch.exp(dot/(self.temperature*bottom)),axis=1)+1e-16 # For stability 
+        loss = -1*torch.log(top/new_bottom)
         return loss.sum()
 
 
