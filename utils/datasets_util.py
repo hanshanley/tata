@@ -81,7 +81,7 @@ class TAGStanceDataset(Dataset):
     def __init__(self, dataset, args):
         self.dataset = dataset
         self.p = args
-        self.tokenizer =AutoTokenizer.from_pretrained('microsoft/deberta-v3-base',use_fast=False)#
+        self.tokenizer =AutoTokenizer.from_pretrained(args.tokenizer,use_fast=False)#
 
     def __len__(self):
         return len(self.dataset)
