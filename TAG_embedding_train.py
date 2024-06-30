@@ -86,10 +86,10 @@ opt = torch.optim.AdamW(learner.parameters(), lr=1e-5)
 train_stance_data = load_stance_dataset('NAME OF TRAIN DATASET.jsonl')
 dev_stance_data = load_stance_dataset('NAME OF DEV DATASET.json')
 
-dev_data = TAGStanceDataset(dev_stance_data, None)
+dev_data = TAGStanceDataset(dev_stance_data, args)
 dev_dataloader = DataLoader(dev_stance_data, shuffle=True, batch_size=BATCH_SIZE,
                                       collate_fn=dev_data.collate_fn)
-train_data = TAGStanceDataset(train_stance_data, None)
+train_data = TAGStanceDataset(train_stance_data, args)
 train_dataloader = DataLoader(train_data, shuffle=True, batch_size=BATCH_SIZE,
                                       collate_fn=train_data.collate_fn)
 
